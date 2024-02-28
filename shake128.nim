@@ -1,6 +1,6 @@
 import std/strutils
 
-include keccakf
+include keccak
 
 
 type Shake128Ctx = object
