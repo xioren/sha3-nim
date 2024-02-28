@@ -1,6 +1,6 @@
 import std/strutils
 
-include keccakf
+include keccak
 
 
 type Sha3_256Ctx = object
