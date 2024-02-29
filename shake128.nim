@@ -15,17 +15,25 @@ const
   Rounds = 24'u8
 
 
-proc update*(ctx: var Shake128Ctx, data: openArray[byte]) =
-  discard ctx.state.keccakAbsorb(data)
-
-
-proc update*(ctx: var Shake128Ctx, data: string) =
-  discard ctx.state.keccakAbsorb(data.toOpenArrayByte(0, data.len.pred))
-
-
 proc read*(ctx: var Shake128Ctx, length: int = DigestSize): seq[byte] =
   result = newSeq[byte](length)
   discard keccakSqueeze(ctx.state, result, length, ctx.padding)
+
+
+proc read*(ctx: var Shake128Ctx, dst: var openArray[byte]) =
+  discard keccakSqueeze(ctx.state, dst, dst.len, ctx.padding)
+
+
+proc write*(ctx: var Shake128Ctx, data: openArray[byte]) =
+  discard keccakAbsorb(ctx.state, data)
+
+
+proc update*(ctx: var Shake128Ctx, data: openArray[byte]) =
+  ctx.write(data)
+
+
+proc update*(ctx: var Shake128Ctx, data: string) =
+  ctx.write(data.toOpenArrayByte(0, data.len.pred))
 
 
 proc digest*(ctx: var Shake128Ctx, length: int = DigestSize): seq[byte] =
